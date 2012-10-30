@@ -15,6 +15,10 @@ module ActiveModel
 
     class_attribute :root
 
+    class << self
+      class_attribute :serializer_class
+    end
+
     def initialize(object, options={})
       @object, @options = object, options
     end
@@ -23,6 +27,8 @@ module ActiveModel
       @object.map do |item|
         if @options.has_key? :each_serializer
           serializer = @options[:each_serializer]
+        elsif self.class.serializer_class
+          serializer = self.class.serializer_class
         elsif item.respond_to?(:active_model_serializer)
           serializer = item.active_model_serializer
         end
